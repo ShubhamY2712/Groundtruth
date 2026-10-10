@@ -4,11 +4,11 @@ Plan a first Global Capability Centre (GCC) in India on numbers you can trace.
 
 Groundtruth ranks Indian cities by the fully-loaded cost of your team. It counts only the state incentives you actually qualify for and lays out a week-by-week setup roadmap. Where public sources disagree, it shows every value, and every number links to the public source it came from.
 
-**Live demo:** [groundtruth-bay.vercel.app](https://groundtruth-bay.vercel.app) · Built for the Flexiple AI Product assignment, October 2026.
+**[Live demo](https://groundtruth-bay.vercel.app)** · **[Pitch deck (PDF)](docs/Groundtruth-deck.pdf)** · Built for the Flexiple AI Product assignment, October 2026
 
 ![Planner](docs/screenshots/plan.png)
 
-## Why this exists
+## The problem
 
 India has more than 2,000 GCCs, but even the basics depend on who you ask:
 
@@ -18,7 +18,7 @@ India has more than 2,000 GCCs, but even the basics depend on who you ask:
 
 First-time, mid-market companies make a decision that locks in cost for years. Most do it on referrals, without an India team or a Big 4 budget. Groundtruth is a planner built for that buyer.
 
-## Features
+## What you can do
 
 | Tab | What it does |
 |---|---|
@@ -27,7 +27,7 @@ First-time, mid-market companies make a decision that locks in cost for years. M
 | **State incentives** | Eligibility at your headcount across 11 cities, and nine state policies with status (notified, partial, unverified, draft) and the catch in each. |
 | **Where sources disagree** | Eight contested numbers plotted with their spread, the planner's default and why, plus a register of 30 sources, with commercial interests flagged. |
 | **Providers** | Track records graded A–D by evidence strength: client-verified, press-reported deal, secondary list, or self-reported. |
-| **Ask** | Plain-English questions answered from your plan first, then backed by the sourced facts. It answers "no sourced data" rather than guessing. Optional LLM answers via an API route. |
+| **Ask** | Plain-English questions answered from your plan first, then backed by the sourced facts. When the data isn't there, it says so instead of guessing. |
 
 | Map | Roadmap and break-even |
 |---|---|
@@ -41,18 +41,18 @@ First-time, mid-market companies make a decision that locks in cost for years. M
 - **Office:** seats × sq ft per seat × rent × 12. Metro rents come from Knight Frank or CRE Matrix (Q1 2026, switchable). Tier-2 rent is the nearest metro's rent minus an editable discount, except Ahmedabad, which has a published figure.
 - **Incentives** are coded as rules (`lib/calc.ts`), so eligibility follows your headcount, salary thresholds, zones and parent-company status. Unverified or draft policies count as ₹0. Gujarat's figures are labelled estimates because its eligibility thresholds weren't in the sources checked.
 - **Setup model and break-even:** each vendor's per-person fee × its own stated break-even headcount gives the monthly entity running cost it implies.
-- **Ask** (`lib/ask.ts`) detects the intent and the cities or states in a question. It computes the answer from your current plan, then retrieves the supporting facts. If `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` is set, `/api/ask` has the model rewrite the answer using only those facts.
+- **Ask** (`lib/ask.ts`) detects the intent and the cities or states in a question. It computes the answer from your current plan, then retrieves the supporting facts. An optional API route can have an LLM write the answer, using only those facts.
 
-Assumptions are shown as dashed chips in the UI. Incentive amounts are indicative, not legal or tax advice.
+Assumptions are shown as dashed chips in the app. Incentive amounts are indicative, not legal or tax advice.
 
 ## Tech stack
 
-Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Vitest · GitHub Actions · Vercel. The fonts (Inter, JetBrains Mono) are self-hosted via Fontsource. The India map is a projected SVG generated at build time with d3-geo; there is no map library at runtime.
+Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Vitest · GitHub Actions · Vercel. The fonts (Inter, JetBrains Mono) are self-hosted. The India map is a projected SVG generated at build time with d3-geo, so there is no map library at runtime.
 
 ```
 app/
   page.tsx              → renders the client app
-  api/ask/route.ts      → optional LLM answers (Anthropic or OpenAI)
+  api/ask/route.ts      → optional LLM-written answers for Ask
 components/             → one panel per tab, plus shared UI (chips, sliders, cards)
 lib/
   calc.ts               → cost model, incentive rules, setup-model advice
@@ -62,6 +62,7 @@ lib/
   data/                 → cities, states, sources, conflicts, providers, facts, map
   __tests__/            → unit tests for the model, Ask and roadmap
 scripts/build-map.mjs   → regenerates lib/data/india-map.ts from the boundary file
+docs/                   → pitch deck and screenshots
 ```
 
 ## Run locally
@@ -71,10 +72,9 @@ npm install
 npm run dev        # http://localhost:3000
 npm test           # unit tests
 npm run lint && npm run typecheck
-npm run build
 ```
 
-Requires Node 20 or newer.
+Requires Node 20 or newer. To turn on LLM-written answers in Ask, copy `.env.example` to `.env.local` and add an API key. Without one, Ask still returns computed answers with sourced facts.
 
 ## Data and limits
 
@@ -87,4 +87,5 @@ Requires Node 20 or newer.
 Map boundary: Survey of India outline via the [DataMeet India community](https://github.com/datameet/maps) (CC BY 4.0).
 
 ## License
-© 2026 Shubham Yawalkar
+
+MIT © 2026 Shubham Yawalkar

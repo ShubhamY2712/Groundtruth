@@ -4,7 +4,7 @@ import { DEFAULT_PLAN, type Plan } from "@/lib/calc";
 import { FACTS } from "@/lib/data/facts";
 
 /**
- * Optional AI answers. Set ANTHROPIC_API_KEY (or OPENAI_API_KEY) in your Vercel project to turn them on.
+ * Optional AI-written answers. Set ANTHROPIC_API_KEY or OPENAI_API_KEY in the environment to turn them on.
  * Without a key the app still works: the client shows the computed answer and the sourced facts.
  */
 const anthropicKey = process.env.ANTHROPIC_API_KEY;
