@@ -4,7 +4,7 @@ Plan a first Global Capability Centre (GCC) in India on numbers you can trace.
 
 Groundtruth ranks Indian cities by the fully-loaded cost of your team. It counts only the state incentives you actually qualify for and lays out a week-by-week setup roadmap. Where public sources disagree, it shows every value, and every number links to the public source it came from.
 
-**Live demo:** _add your Vercel URL here_ · Built for the Flexiple AI Product assignment, October 2026.
+**Live demo:** [groundtruth-bay.vercel.app](https://groundtruth-bay.vercel.app) · Built for the Flexiple AI Product assignment, October 2026.
 
 ![Planner](docs/screenshots/plan.png)
 
@@ -81,7 +81,7 @@ Requires Node 20 or newer.
 1. Push this repo to GitHub.
 2. In Vercel, choose **Add New → Project**, import the repo and keep the defaults (framework: Next.js).
 3. Optional: add `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` under **Settings → Environment Variables** to turn on AI answers in Ask. See `.env.example`.
-4. Put your repo URL in `lib/site.ts` so the Code button links to it.
+4. Put your repo URL in `lib/site.ts` so the Code button in the header links to it.
 
 ## Data and limits
 

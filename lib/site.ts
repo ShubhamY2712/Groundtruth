@@ -1,5 +1,5 @@
-/** Edit these after you create the GitHub repo. */
+/** Project links shown in the app header. */
 export const SITE = {
   author: "Shubham Yawalkar",
-  repoUrl: "https://github.com/your-github-username/groundtruth",
+  repoUrl: "https://github.com/ShubhamY2712/Groundtruth",
 };
