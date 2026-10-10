@@ -88,4 +88,4 @@ Map boundary: Survey of India outline via the [DataMeet India community](https:/
 
 ## License
 
-MIT © 2026 Shubham Yawalkar
+© 2026 Shubham Yawalkar
