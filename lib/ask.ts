@@ -113,7 +113,7 @@ function findStates(q: string): string[] {
 
 export function detectIntent(q: string): Intent {
   const s = q.toLowerCase();
-  if (/incentive|subsid|polic|qualif|eligib|rebate|reimburse|grant|benefit/.test(s)) return "incentives";
+  if (/incentive|subsid|polic|qualif|eligib|rebate|reimburse|grant|benefit|(rent|epf|payroll|capex|opex|capital|state|government) (support|assistance)/.test(s)) return "incentives";
   if (/tier.?2|tier.?ii|beyond|smaller cit|emerging cit|non.?metro/.test(s)) return "tier2";
   if (/entity|\beor\b|employer of record|managed employment|incorporat|break.?even|\bbot\b|build.operate|setup model|which model/.test(s)) return "model";
   if (/how long|timeline|how much time|weeks|months|roadmap|when can|go.?live/.test(s)) return "timeline";
@@ -137,9 +137,21 @@ function incentiveSummary(r: CityResult): string {
   return `In ${r.city.name} you qualify for nothing material right now. ${first ? `${first.label}: ${first.note}` : ""}`;
 }
 
-export function answerQuestion(question: string, plan: Plan): Answer {
+/** "200 engineers", "a team of 150", "80 people": a headcount in the question overrides the plan's. */
+export function findHeadcount(q: string): number | null {
+  const m =
+    q.match(/\b(\d{2,3})[\s-]*(?:engineers?|people|persons?|staff|employees?|devs?|developers?|members?|hires?|seats?|fte)\b/i) ??
+    q.match(/\bteam of (\d{2,3})\b/i);
+  if (!m) return null;
+  const n = Number(m[1]);
+  return n >= 10 && n <= 500 ? n : null;
+}
+
+export function answerQuestion(question: string, basePlan: Plan): Answer {
   const q = question.trim();
   if (!q) return { intent: "none", answer: "", facts: [] };
+  const asked = findHeadcount(q);
+  const plan: Plan = asked ? { ...basePlan, n: asked } : basePlan;
   const cities = findCities(q);
   const states = findStates(q);
   let intent = detectIntent(q);
@@ -228,10 +240,14 @@ export function answerQuestion(question: string, plan: Plan): Answer {
       break;
     }
     case "model": {
+      if (/\bbot\b|build.operate/i.test(q)) {
+        answer = `Infosys and HCLTech have press-reported BOT deals: Infosys is building Truist's Hyderabad centre (about 4,500 staff) and HCLTech Western Union's (400+). Cognizant is named as a partner on Citizens Financial's (secondary source). BOT suits large centres; at ${n} engineers the planner recommends: ${recommendModel(n).title.toLowerCase()}.`;
+        boost = "bot build-operate-transfer provider";
+        break;
+      }
       const m = recommendModel(n);
       const [f, w] = BREAK_EVEN_VENDORS.map(impliedOverhead);
       answer = `${m.title}. ${m.why} The vendors' own numbers imply an entity costs about ${usd(f[0])} a month to run (Flexiple) or ${usd(w[0])}–${usd(w[1])} (Wisemonk).`;
-      if (/\bbot\b|build.operate/i.test(q)) answer += " Build-operate-transfer suits large centres: Infosys is building Truist's (about 4,500 staff) and HCLTech Western Union's (400+).";
       boost = "entity eor break-even";
       break;
     }
@@ -254,7 +270,12 @@ export function answerQuestion(question: string, plan: Plan): Answer {
     }
     case "tier2": {
       const t2 = all.filter((r) => r.city.tier === 2);
-      answer = `Tier-2 options for ${n} engineers: ${t2.map((r) => `${r.city.name} ${money(r.y1)}`).join(", ")} in year one. No source publishes tier-2 pay medians, so pay is estimated at ${plan.payDiscount}% below the nearest metro. Incentives are richer here: Mysuru gets Karnataka's rent and EPF support and Nagpur gets Maharashtra's Zone II rates, both from 100 staff.`;
+      const bestMetro = all.filter((r) => r.city.tier === 1)[0];
+      const saving = t2.length ? Math.round((1 - t2[0].y1 / bestMetro.y1) * 100) : 0;
+      const verdict = saving > 0
+        ? `On cost, likely yes: ${t2[0].city.name} comes out ${saving}% below ${bestMetro.city.name}, the cheapest metro, but tier-2 pay is an estimate and talent pools are unpublished, so validate with live offers. `
+        : `On cost, not at this size: no tier-2 city beats ${bestMetro.city.name}. `;
+      answer = verdict + `Tier-2 options for ${n} engineers: ${t2.map((r) => `${r.city.name} ${money(r.y1)}`).join(", ")} in year one. No source publishes tier-2 pay medians, so pay is estimated at ${plan.payDiscount}% below the nearest metro. Incentives are richer here: Mysuru gets Karnataka's rent and EPF support and Nagpur gets Maharashtra's Zone II rates, both from 100 staff.`;
       boost = "tier-2 tier2 emerging";
       break;
     }
@@ -274,6 +295,9 @@ export function answerQuestion(question: string, plan: Plan): Answer {
   const names = [...states, ...cities.map((c) => c.name)].map((x) => x.toLowerCase());
   const onTopic = names.length ? ranked.filter((f) => names.some((nm) => (f.text + " " + f.tags).toLowerCase().includes(nm))) : [];
   const facts = (onTopic.length ? onTopic : ranked).slice(0, 4);
+  if (answer && asked && asked !== basePlan.n) {
+    answer += ` (Worked out for the ${asked} engineers in your question; your plan is set to ${basePlan.n}.)`;
+  }
   if (!answer) {
     answer = facts.length
       ? `The closest sourced fact: ${facts[0].text}`

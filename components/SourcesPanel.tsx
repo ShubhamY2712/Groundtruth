@@ -23,7 +23,7 @@ export default function SourcesPanel({ flash }: { flash: SourceId | null }) {
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-[15px] font-semibold leading-snug text-slate-900">{c.question}</h3>
                 <span className="shrink-0 whitespace-nowrap rounded bg-rose-50 px-1.5 py-0.5 font-mono text-[11px] font-medium text-rose-600">
-                  {spread >= 1.95 ? `${spread.toFixed(1)}× spread` : `±${Math.round((spread - 1) * 100)}%`}
+                  {spread >= 1.95 ? `${spread.toFixed(1)}× spread` : `${Math.round((spread - 1) * 100)}% apart`}
                 </span>
               </div>
               <div className="relative mx-2 mt-5 mb-3 h-4" aria-hidden="true">

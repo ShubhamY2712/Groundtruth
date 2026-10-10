@@ -257,7 +257,7 @@ function CityDetail({ r, plan }: { r: CityResult; plan: Plan }) {
         <Row label={`Salaries (${r.nJun} + ${r.nSen} senior)`} value={money(r.salary)} />
         <Row label={<>On-costs {plan.overhead}% <AssumptionChip /></>} value={money(r.talent - r.salary)} />
         <Row label={<>Office at ₹{r.rent}/sq ft {r.rentEstimated ? <EstimateChip /> : <SourceChip id={rentSrc} />}</>} value={money(r.space)} />
-        {r.rentAlt !== null && !r.rentEstimated && <Row label={<>Other source says ₹{r.rentAlt} <ConflictChip>±{rentGap}%</ConflictChip></>} value={money(plan.n * plan.sqft * r.rentAlt * 12)} />}
+        {r.rentAlt !== null && !r.rentEstimated && <Row label={<>Other source says ₹{r.rentAlt} <ConflictChip>{rentGap}% apart</ConflictChip></>} value={money(plan.n * plan.sqft * r.rentAlt * 12)} />}
         <Row label="Incentives counted" value={`− ${money(r.incentives.y1)}`} />
         <Row label="Net year one" value={money(r.y1)} strong />
         <Row label="Per engineer" value={money(r.perHead)} />

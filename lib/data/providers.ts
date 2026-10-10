@@ -28,7 +28,6 @@ export const PROVIDERS: Provider[] = [
     category: "Advisor",
     evidence: [
       { grade: "C", text: "Partner on Daikin's Gurugram GCC (2024)", src: "S10" },
-      { grade: "D", text: "Publishes GCC policy and failure analysis", src: "S13" },
     ],
   },
   { name: "Zinnov", category: "Advisor", evidence: [{ grade: "D", text: "Says it has delivered 220+ GCC setups and placed 250,000+ people", src: "S1" }] },

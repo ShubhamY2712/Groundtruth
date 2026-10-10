@@ -42,7 +42,7 @@ export default function AskPanel({ plan }: { plan: Plan }) {
   return (
     <div className="max-w-4xl">
       <PanelHeader eyebrow="Answers from the sourced dataset" title="Ask Groundtruth">
-        Ask in plain English. You get a direct answer first, worked out from your current plan ({plan.n} engineers), followed by the sourced facts behind it. If the data isn&apos;t there, it says so instead of guessing.
+        Ask in plain English. You get a direct answer first, worked out from your plan ({plan.n} engineers, or the team size you name), followed by the sourced facts behind it. If the data isn&apos;t there, it says so instead of guessing.
         {ai.enabled && ` AI answers are on (${ai.model}) and are limited to the same facts.`}
       </PanelHeader>
 

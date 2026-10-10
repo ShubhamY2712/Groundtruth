@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { answerQuestion, detectIntent } from "../ask";
+import { answerQuestion, detectIntent, findHeadcount } from "../ask";
 import { DEFAULT_PLAN } from "../calc";
 
 describe("ask", () => {
@@ -24,5 +24,19 @@ describe("ask", () => {
 
   it("admits when the data is missing", () => {
     expect(answerQuestion("What is the weather in Goa?", DEFAULT_PLAN).answer).toMatch(/no sourced data/);
+  });
+
+  it("treats rent support as an incentive question", () => {
+    expect(detectIntent("Do Bengaluru GCCs get rent support?")).toBe("incentives");
+    expect(answerQuestion("Do Bengaluru GCCs get rent support?", DEFAULT_PLAN).answer).toContain("Beyond Bengaluru");
+  });
+
+  it("uses a headcount stated in the question", () => {
+    expect(findHeadcount("How much would 200 engineers in Pune cost?")).toBe(200);
+    expect(findHeadcount("a team of 150 in Chennai")).toBe(150);
+    expect(findHeadcount("Is Bengaluru worth it in 2026?")).toBeNull();
+    const a = answerQuestion("How much would 200 engineers in Pune cost?", DEFAULT_PLAN);
+    expect(a.answer).toContain("for 200 engineers");
+    expect(a.answer).toContain("your plan is set to 60");
   });
 });

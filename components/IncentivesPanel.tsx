@@ -19,8 +19,8 @@ export default function IncentivesPanel({ plan }: { plan: Plan }) {
   const rows = useMemo(() => calcAll({ ...plan, includeTier2: true, rank: "y3" }).sort((a, b) => b.incentives.y1 - a.incentives.y1), [plan]);
   return (
     <div>
-      <PanelHeader eyebrow="State GCC policies · as published" title="Ten states want GCCs. Most incentives have a catch.">
-        States target about 1,380 new GCCs and 1.18 million jobs by 2029–31 <SourceChips ids={["S11"]} />, while the market adds roughly 55–100 a year <SourceChips ids={["S9"]} />. The terms sit in policy PDFs, thresholds differ, and several headline incentives skip the metros where most GCCs go.
+      <PanelHeader eyebrow="State GCC policies · as published" title="States want GCCs. Most incentives have a catch.">
+        Ten states target about 1,380 new GCCs and 1.18 million jobs by 2029–31 <SourceChips ids={["S11"]} />, while the market adds roughly 55–100 a year <SourceChips ids={["S9"]} />. The terms sit in policy PDFs, thresholds differ, and several headline incentives skip the metros where most GCCs go.
       </PanelHeader>
 
       <Card className="mb-6 overflow-hidden">
@@ -41,6 +41,12 @@ export default function IncentivesPanel({ plan }: { plan: Plan }) {
             <tbody className="divide-y divide-slate-100">
               {rows.map((r) => {
                 const best = [...r.incentives.items].sort((a, b) => RANK.indexOf(a.status) - RANK.indexOf(b.status))[0];
+                const counted = r.incentives.items.filter((i) => i.y1 > 0 && (i.status === "applied" || i.status === "estimate"));
+                // When more than one incentive adds up to the total, name each part so the sum is checkable.
+                const reason =
+                  counted.length > 1
+                    ? `${counted.map((i) => `${i.label.split(/[:,]/)[0].trim()} ${money(i.y1)}`).join(" + ")}.${best?.status === "estimate" ? " Estimates: eligibility thresholds were not in the sources checked." : ""}`
+                    : best?.note;
                 return (
                   <tr key={r.city.id}>
                     <td className="px-5 py-3 font-medium text-slate-900">
@@ -48,7 +54,7 @@ export default function IncentivesPanel({ plan }: { plan: Plan }) {
                       <span className="block text-xs font-normal text-slate-500">{r.city.state}</span>
                     </td>
                     <td className="px-3 py-3">{best && <StatusPill status={best.status} />}</td>
-                    <td className="max-w-md px-3 py-3 text-slate-600">{best?.note}</td>
+                    <td className="max-w-md px-3 py-3 text-slate-600">{reason}</td>
                     <td className="px-5 py-3 text-right font-mono font-medium text-slate-900 tabular">{money(r.incentives.y1)}</td>
                   </tr>
                 );
