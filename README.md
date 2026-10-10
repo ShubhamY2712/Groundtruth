@@ -87,5 +87,4 @@ Requires Node 20 or newer.
 Map boundary: Survey of India outline via the [DataMeet India community](https://github.com/datameet/maps) (CC BY 4.0).
 
 ## License
-
-MIT © 2026 Shubham Yawalkar
+© 2026 Shubham Yawalkar
