@@ -76,13 +76,6 @@ npm run build
 
 Requires Node 20 or newer.
 
-## Deploy on Vercel
-
-1. Push this repo to GitHub.
-2. In Vercel, choose **Add New → Project**, import the repo and keep the defaults (framework: Next.js).
-3. Optional: add `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` under **Settings → Environment Variables** to turn on AI answers in Ask. See `.env.example`.
-4. Put your repo URL in `lib/site.ts` so the Code button in the header links to it.
-
 ## Data and limits
 
 - All data is compiled from public sources as of October 2026. The full list is in the app's source register (`lib/data/sources.ts`).
